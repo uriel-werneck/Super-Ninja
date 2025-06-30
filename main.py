@@ -34,20 +34,20 @@ player.is_attacking = False
 player.dead = False
 
 # Váriaveis do inimigo1
-enemy = Actor("enemy_idle_1", (WIDTH - 100, HEIGHT - 30))
-enemy.vx = 0
-enemy.vy = 0
-enemy.x = WIDTH - 300
-enemy.y = HEIGHT - 30 - enemy.height // 2
-enemy.is_attacking = False
-enemy.x_target_1 = enemy.x + 150
-enemy.x_target_2 = enemy.x
-enemy.reach_target_1 = False
-enemy.reach_target_2 = False
-enemy.rest_delay = 60  # Tempo de descanso em frames
-enemy.current_rest_delay = 0
-enemy.on_rest_delay = True
-enemy.dead = False
+enemy1 = Actor("enemy_idle_1", (WIDTH - 100, HEIGHT - 30))
+enemy1.vx = 0
+enemy1.vy = 0
+enemy1.x = WIDTH - 300
+enemy1.y = HEIGHT - 30 - enemy1.height // 2
+enemy1.is_attacking = False
+enemy1.x_target_1 = enemy1.x + 150
+enemy1.x_target_2 = enemy1.x
+enemy1.reach_target_1 = False
+enemy1.reach_target_2 = False
+enemy1.rest_delay = 60  # Tempo de descanso em frames
+enemy1.current_rest_delay = 0
+enemy1.on_rest_delay = True
+enemy1.dead = False
 
 # Váriaveis do inimigo2
 enemy2 = Actor("enemy_idle_1", (WIDTH - 100, HEIGHT - 30))
@@ -71,9 +71,9 @@ player.anim_frame = 1
 player.anim_timer = 0
 
 # Animação do inimigo1
-enemy.anim_state = "idle"  # "idle" ou "walk"
-enemy.anim_frame = 1
-enemy.anim_timer = 0
+enemy1.anim_state = "idle"  # "idle" ou "walk"
+enemy1.anim_frame = 1
+enemy1.anim_timer = 0
 
 # Animação do inimigo2
 enemy2.anim_state = "idle"  # "idle" ou "walk"
@@ -112,9 +112,6 @@ def update_actor_animation(actor, actor_name, total_idle_frames, total_walk_fram
 
     # Atualiza o frame da animação
     actor.anim_timer += 1
-
-    if actor_name == 'enemy':
-        print(actor.anim_state)
 
     if actor.dead:
         if actor.anim_timer >= 7:
@@ -186,7 +183,7 @@ def draw():
         game_background.draw()
         platform.draw()
         player.draw()
-        enemy.draw()
+        enemy1.draw()
         enemy2.draw()
 
 # Função de eventos do mouse
@@ -213,31 +210,28 @@ def on_key_down(key):
     if key == keys.ESCAPE and game_state == "Playing":
         game_state = "Menu"
         play_menu_music()
-    elif game_state == "Playing":
-        if key == keys.D:
-            player.vx += PLAYER_SPEED
-        elif key == keys.A:
-            player.vx -= PLAYER_SPEED
-        elif key == keys.W and player.on_ground:
-            player.vy = -JUMP_STRENGTH
-            player.on_ground = False
-            if not is_muted:
-                sounds.jump.play()
-        elif key == keys.SPACE:
-            player.is_attacking = True
-            if not is_muted:
-                sounds.attack.play()
+    if key == keys.D:
+        player.vx += PLAYER_SPEED
+    elif key == keys.A:
+        player.vx -= PLAYER_SPEED
+    elif key == keys.W and player.on_ground:
+        player.vy = -JUMP_STRENGTH
+        player.on_ground = False
+        if not is_muted and game_state == "Playing":
+            sounds.jump.play()
+    elif key == keys.SPACE and game_state == "Playing":
+        player.is_attacking = True
+        if not is_muted:
+            sounds.attack.play()
 
 # Evento de teclas soltas
 def on_key_up(key):
-    global game_state
-    if game_state == "Playing":
-        if key == keys.D:
-            player.vx -= PLAYER_SPEED
-        elif key == keys.A:
-            player.vx += PLAYER_SPEED
-        elif key == keys.SPACE:
-            player.is_attacking = False
+    if key == keys.D:
+        player.vx -= PLAYER_SPEED
+    elif key == keys.A:
+        player.vx += PLAYER_SPEED
+    elif key == keys.SPACE:
+        player.is_attacking = False
 
 def update_enemy_position(enemy):
     enemy.x += enemy.vx
@@ -298,13 +292,13 @@ def update():
                 player.on_ground = True
 
 
-        for e in [enemy, enemy2]:
+        for e in [enemy1, enemy2]:
             if not e.dead:
                 # Atualiza posição do inimigo
                 update_enemy_position(e)
             
         # Detecta colisão entre jogador e inimigo
-        for e in [enemy, enemy2]:
+        for e in [enemy1, enemy2]:
             if player.is_attacking and player.colliderect(e):
                 if not e.dead:
                     e.dead = True
@@ -313,7 +307,7 @@ def update():
 
         # Atualiza animação do jogador e dos inimigos
         update_actor_animation(player, 'player', 6, 7, 4, 0)
-        update_actor_animation(enemy, 'enemy', 6, 8, 0, 3)
+        update_actor_animation(enemy1, 'enemy', 6, 8, 0, 3)
         update_actor_animation(enemy2, 'enemy', 6, 8, 0, 3)
 
 # Iniciar o jogo
