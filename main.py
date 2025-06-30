@@ -239,7 +239,6 @@ def on_key_up(key):
         elif key == keys.SPACE:
             player.is_attacking = False
 
-
 def update_enemy_position(enemy):
     enemy.x += enemy.vx
     enemy.y += enemy.vy
@@ -266,7 +265,6 @@ def update_enemy_position(enemy):
                 enemy.vx = 0
                 enemy.anim_state = "idle"
                 enemy.on_rest_delay = True
-
 
 # Atualiza o movimento do jogador
 def update():
@@ -310,7 +308,8 @@ def update():
             if player.is_attacking and player.colliderect(e):
                 if not e.dead:
                     e.dead = True
-                    sounds.dying.play()
+                    if not is_muted:
+                        sounds.dying.play()
 
         # Atualiza animação do jogador e dos inimigos
         update_actor_animation(player, 'player', 6, 7, 4, 0)
