@@ -8,10 +8,10 @@ Projeto desenvolvido para o processo seletivo da Kodland Brasil.
 - Matemática
 
 ## 🎮 Controles
-A => andar para a esquerda
-D => andar para a direita
-W => pular
-ESPAÇO => Atacar
+- A => andar para a esquerda
+- D => andar para a direita
+- W => pular
+- ESPAÇO => Atacar
 
 ## 📦 Instalação das Dependências
 ```bash
