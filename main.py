@@ -25,63 +25,46 @@ menu_background = Actor("wood", (WIDTH//2, HEIGHT//2))
 game_background = Actor("grass_field", (WIDTH//2, HEIGHT//2))
 platform = Actor("platform", (WIDTH//2, HEIGHT//2))  # Adjust Y as needed
 
+# classes
+class Human(Actor):
+    def __init__(self, name: str, default_anim: str, pos: tuple):
+        super().__init__(default_anim, pos)
+        self.name = name
+        self.vx = 0
+        self.vy = 0
+        self.is_attacking = False
+        self.x_target_1 = 0
+        self.x_target_2 = 0
+        self.reach_target_1 = False
+        self.reach_target_2 = False
+        self.rest_delay = 60  # Tempo de descanso em frames
+        self.current_rest_delay = 0
+        self.on_rest_delay = True
+        self.dead = False
+        self.on_ground = False
+        self.is_attacking = False
+        self.dead = False
+        self.anim_state = "idle"
+        self.anim_frame = 1
+        self.anim_timer = 0
+
 # Variáveis do jogador
-player = Actor("player_idle_1", (50, HEIGHT - 30))
-player.vx = 0
-player.vy = 0
-player.on_ground = False
-player.is_attacking = False
-player.dead = False
+player = Human("player", "player_idle_1", (50, HEIGHT - 30))
 
 # Váriaveis do inimigo1
-enemy1 = Actor("enemy_idle_1", (WIDTH - 100, HEIGHT - 30))
-enemy1.vx = 0
-enemy1.vy = 0
-enemy1.x = WIDTH - 300
+enemy1 = Human("enemy", "enemy_idle_1", (WIDTH - 300, HEIGHT - 30))
 enemy1.y = HEIGHT - 30 - enemy1.height // 2
-enemy1.is_attacking = False
 enemy1.x_target_1 = enemy1.x + 150
 enemy1.x_target_2 = enemy1.x
-enemy1.reach_target_1 = False
-enemy1.reach_target_2 = False
-enemy1.rest_delay = 60  # Tempo de descanso em frames
-enemy1.current_rest_delay = 0
-enemy1.on_rest_delay = True
-enemy1.dead = False
 
 # Váriaveis do inimigo2
-enemy2 = Actor("enemy_idle_1", (WIDTH - 100, HEIGHT - 30))
-enemy2.vx = 0
-enemy2.vy = 0
-enemy2.x = WIDTH//2
+enemy2 = Human("enemy", "enemy_idle_1", (WIDTH//2, HEIGHT - 30))
 enemy2.y = HEIGHT//2 - enemy2.height // 2 - platform.height // 2
-enemy2.is_attacking = False
 enemy2.x_target_1 = platform.x + platform.width // 2 - enemy2.width // 2
 enemy2.x_target_2 = platform.x - platform.width // 2 + enemy2.width // 2
-enemy2.reach_target_1 = False
-enemy2.reach_target_2 = False
-enemy2.rest_delay = 60  # Tempo de descanso em frames
-enemy2.current_rest_delay = 0
-enemy2.on_rest_delay = True
-enemy2.dead = False
-
-# Animação do jogador
-player.anim_state = "idle"  # "idle", "walk_right" "walk_left" ou "attack"
-player.anim_frame = 1
-player.anim_timer = 0
-
-# Animação do inimigo1
-enemy1.anim_state = "idle"  # "idle" ou "walk"
-enemy1.anim_frame = 1
-enemy1.anim_timer = 0
-
-# Animação do inimigo2
-enemy2.anim_state = "idle"  # "idle" ou "walk"
-enemy2.anim_frame = 1
-enemy2.anim_timer = 0
 
 # Função para atualizar a animação do ator
-def update_actor_animation(actor, actor_name, total_idle_frames, total_walk_frames, total_attack_frames, total_dead_frames):
+def update_actor_animation(actor, total_idle_frames, total_walk_frames, total_attack_frames, total_dead_frames):
     # Escolhe o estado de animação
     if actor.dead:
         if actor.anim_state != "dead":
@@ -119,28 +102,28 @@ def update_actor_animation(actor, actor_name, total_idle_frames, total_walk_fram
                 actor.anim_frame += 1
                 if actor.anim_frame > total_dead_frames:
                     actor.anim_frame = 1
-                actor.image = f"{actor_name}_dead_{actor.anim_frame}"
+                actor.image = f"{actor.name}_dead_{actor.anim_frame}"
                 actor.anim_timer = 0
     elif actor.anim_state == "idle":
         if actor.anim_timer >= 7:
             actor.anim_frame += 1
             if actor.anim_frame > total_idle_frames:
                 actor.anim_frame = 1
-            actor.image = f"{actor_name}_idle_{actor.anim_frame}"
+            actor.image = f"{actor.name}_idle_{actor.anim_frame}"
             actor.anim_timer = 0
     elif actor.anim_state == "walk_right":
         if actor.anim_timer >= 5:
             actor.anim_frame += 1
             if actor.anim_frame > total_walk_frames:
                 actor.anim_frame = 1
-            actor.image = f"{actor_name}_walk_right_{actor.anim_frame}"
+            actor.image = f"{actor.name}_walk_right_{actor.anim_frame}"
             actor.anim_timer = 0
     elif actor.anim_state == "walk_left":
         if actor.anim_timer >= 5:
             actor.anim_frame += 1
             if actor.anim_frame > total_walk_frames:
                 actor.anim_frame = 1
-            actor.image = f"{actor_name}_walk_left_{actor.anim_frame}"
+            actor.image = f"{actor.name}_walk_left_{actor.anim_frame}"
             actor.anim_timer = 0
     elif actor.anim_state == "attack":
         if actor.anim_timer >= 4:  # Ajude de velocidade
@@ -148,7 +131,7 @@ def update_actor_animation(actor, actor_name, total_idle_frames, total_walk_fram
             if actor.anim_frame > total_attack_frames:
                 actor.anim_frame = 1
                 actor.is_attacking = False  # Finaliza o ataque após a animação
-            actor.image = f"{actor_name}_attack_{actor.anim_frame}"
+            actor.image = f"{actor.name}_attack_{actor.anim_frame}"
             actor.anim_timer = 0
 
 # Função para detectar colisão com o chão (simples)
@@ -306,9 +289,9 @@ def update():
                         sounds.dying.play()
 
         # Atualiza animação do jogador e dos inimigos
-        update_actor_animation(player, 'player', 6, 7, 4, 0)
-        update_actor_animation(enemy1, 'enemy', 6, 8, 0, 3)
-        update_actor_animation(enemy2, 'enemy', 6, 8, 0, 3)
+        update_actor_animation(player, 6, 7, 4, 0)
+        update_actor_animation(enemy1, 6, 8, 0, 3)
+        update_actor_animation(enemy2, 6, 8, 0, 3)
 
 # Iniciar o jogo
 play_menu_music()
