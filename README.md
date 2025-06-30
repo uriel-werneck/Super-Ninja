@@ -13,6 +13,7 @@ pip install -r requirements.txt
 - Matemática
 
 ## 🎮 Controles
+- ESC (Voltar para o menu)
 - A (Andar para a esquerda)
 - D (Andar para a direita
 - W (Pular)
