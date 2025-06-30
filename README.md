@@ -8,9 +8,9 @@ Projeto desenvolvido para o processo seletivo da Kodland Brasil.
 - Matemática
 
 ## 🎮 Controles
-- A (andar para a esquerda)
-- D (andar para a direita
-- W (pular)
+- A (Andar para a esquerda)
+- D (Andar para a direita
+- W (Pular)
 - ESPAÇO (Atacar)
 
 ## 📦 Instalação das Dependências
