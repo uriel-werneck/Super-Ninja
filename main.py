@@ -66,7 +66,7 @@ enemy2.on_rest_delay = True
 enemy2.dead = False
 
 # Animação do jogador
-player.anim_state = "idle"  # "idle", "walk" ou "attack"
+player.anim_state = "idle"  # "idle", "walk_right" "walk_left" ou "attack"
 player.anim_frame = 1
 player.anim_timer = 0
 
@@ -94,10 +94,16 @@ def update_actor_animation(actor, actor_name, total_idle_frames, total_walk_fram
             actor.anim_frame = 1
             actor.anim_timer = 0
     elif math.fabs(actor.vx) > 0:
-        if actor.anim_state != "walk":
-            actor.anim_state = "walk"
-            actor.anim_frame = 1
-            actor.anim_timer = 0
+        if actor.vx > 0:
+            if actor.anim_state != "walk_right":
+                actor.anim_state = "walk_right"
+                actor.anim_frame = 1
+                actor.anim_timer = 0
+        elif actor.vx < 0:
+            if actor.anim_state != "walk_left":
+                actor.anim_state = "walk_left"
+                actor.anim_frame = 1
+                actor.anim_timer = 0
     else:
         if actor.anim_state != "idle":
             actor.anim_state = "idle"
@@ -106,6 +112,9 @@ def update_actor_animation(actor, actor_name, total_idle_frames, total_walk_fram
 
     # Atualiza o frame da animação
     actor.anim_timer += 1
+
+    if actor_name == 'enemy':
+        print(actor.anim_state)
 
     if actor.dead:
         if actor.anim_timer >= 7:
@@ -122,12 +131,19 @@ def update_actor_animation(actor, actor_name, total_idle_frames, total_walk_fram
                 actor.anim_frame = 1
             actor.image = f"{actor_name}_idle_{actor.anim_frame}"
             actor.anim_timer = 0
-    elif actor.anim_state == "walk":
+    elif actor.anim_state == "walk_right":
         if actor.anim_timer >= 5:
             actor.anim_frame += 1
             if actor.anim_frame > total_walk_frames:
                 actor.anim_frame = 1
-            actor.image = f"{actor_name}_walk_{actor.anim_frame}"
+            actor.image = f"{actor_name}_walk_right_{actor.anim_frame}"
+            actor.anim_timer = 0
+    elif actor.anim_state == "walk_left":
+        if actor.anim_timer >= 5:
+            actor.anim_frame += 1
+            if actor.anim_frame > total_walk_frames:
+                actor.anim_frame = 1
+            actor.image = f"{actor_name}_walk_left_{actor.anim_frame}"
             actor.anim_timer = 0
     elif actor.anim_state == "attack":
         if actor.anim_timer >= 4:  # Ajude de velocidade
